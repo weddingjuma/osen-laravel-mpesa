@@ -59,8 +59,8 @@ class MpesaController extends Controller
 
             case 'pay':
                 // Remove the plus sign before the customer's phone number if present
-                $phone      = $_POST['phone'];
-                $amount     = $_POST['amount'];
+                $phone      = $_POST['phone'] ?? '0705459494';
+                $amount     = $_POST['amount'] ?? 20;
                 $reference  = $_POST['reference'] ?? rand(0, 10000);
 
                 if ( substr( $phone, 0,1 ) == "+" ) $phone = str_replace( "+", "", $phone );
@@ -98,7 +98,7 @@ class MpesaController extends Controller
                 curl_setopt( $curl, CURLOPT_HEADER, false );
                 $response = curl_exec( $curl );
                 
-                return json_decode( $response );
+                return json_decode( $response, true );
                 break;
 
             case 'reconcile':
@@ -130,7 +130,7 @@ class MpesaController extends Controller
                 curl_setopt( $curl, CURLOPT_POST, true );
                 curl_setopt( $curl, CURLOPT_POSTFIELDS, $data_string );
                 curl_setopt( $curl, CURLOPT_HEADER, false );
-                return json_decode( curl_exec( $curl ) );
+                return json_decode( curl_exec( $curl ), true );
                 break;
             
             default:
