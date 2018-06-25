@@ -1,4 +1,4 @@
-# osen-laravel-mpesa
+# Laravel Mpesa
 Mpesa Controller class for Laravel PHP Framework
 
 ## Usage
