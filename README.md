@@ -36,5 +36,14 @@ Add the following in your `~/routes/api.php` file to register our Mpesa IPN rout
 Before you proceed, you need to register your validation and confirmation URLS. To do this, navigate to `https://yoursite.tld/:443/mpesa/register`
 
 The actual URLS we will be registering here are:
-    https://yoursite.tld/:443/mpesa/validate
-    https://yoursite.tld/:443/mpesa/confirm
+    `https://yoursite.tld/:443/mpesa/validate`
+    `https://yoursite.tld/:443/mpesa/confirm`
+
+### Payment Processing
+To process payment for an online checkout, send a POST request to `https://yoursite.tld/:443/mpesa/pay` with the following keys:
+ 'amount'
+ 'phone'
+ 'reference'(optional)
+
+ ### Reconciliation
+ 
