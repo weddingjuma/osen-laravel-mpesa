@@ -9,46 +9,77 @@ class Mpesa extends Controller
 	public function __invoke( Request $request, $path, $transID = 0 )
     {
 
-        $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        // $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
-        $credentials = base64_encode( getenv( 'MPESA_APP_KEY' ).':'.getenv( 'MPESA_APP_SECRET' ) );
+        // $credentials = base64_encode( getenv( 'MPESA_APP_KEY' ).':'.getenv( 'MPESA_APP_SECRET' ) );
 
-        $curl = curl_init();
-        curl_setopt( $curl, CURLOPT_URL, $endpoint );
-        curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Basic '.$credentials ) );
-        curl_setopt( $curl, CURLOPT_HEADER, false );
-        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
-        $curl_response = curl_exec( $curl );
+        // $curl = curl_init();
+        // curl_setopt( $curl, CURLOPT_URL, $endpoint );
+        // curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Basic '.$credentials ) );
+        // curl_setopt( $curl, CURLOPT_HEADER, false );
+        // curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
+        // curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
+        // $curl_response = curl_exec( $curl );
         
-        $token = json_decode( $curl_response )->access_token;
+        // $token = json_decode( $curl_response )->access_token;
 
         switch ( $path ) {
             case 'validate':
-                return array( 
-                  'ResponseCode'  => 0, 
-                  'ResponseDesc'  => 'Success',
-                  'ThirdPartyTransID'   => $transID
-                 );
-                // return array( 
-                //   'ResponseCode'        => 1, 
-                //   'ResponseDesc'        => 'Failed',
-                //   'ThirdPartyTransID'   => $transID
-                //  );
+                $class = $request->query( 'class', null );
+                $method = $request->query( 'method', null );
+                if( is_null( $class ) ){
+                    return array( 
+                      'ResponseCode'            => 0, 
+                      'ResponseDesc'            => 'Success',
+                      'ThirdPartyTransID'       => $transID
+                     );
+                } else {
+                    if ( !call_user_func_array( array( $class, $method ), array( $transID ) )) {
+                        return array( 
+                          'ResponseCode'        => 1, 
+                          'ResponseDesc'        => 'Failed',
+                          'ThirdPartyTransID'   => $transID
+                         );
+                    } else {
+                    return array( 
+                      'ResponseCode'            => 0, 
+                      'ResponseDesc'            => 'Success',
+                      'ThirdPartyTransID'       => $transID
+                     );
+                    }
+                }
                 break;
 
             case 'confirm':
-                return array( 
-                  'ResponseCode'  => 0, 
-                  'ResponseDesc'  => 'Success',
-                  'ThirdPartyTransID'   => $transID
-                 );
+                $class = $request->query( 'class', null );
+                $method = $request->query( 'method', null );
+                if( is_null( $class ) ){
+                    return array( 
+                      'ResponseCode'            => 0, 
+                      'ResponseDesc'            => 'Success',
+                      'ThirdPartyTransID'       => $transID
+                     );
+                } else {
+                    if ( ! call_user_func_array( array( $class, $method ), array( $transID ) )) {
+                        return array( 
+                          'ResponseCode'        => 1, 
+                          'ResponseDesc'        => 'Failed',
+                          'ThirdPartyTransID'   => $transID
+                         );
+                    } else {
+                    return array( 
+                      'ResponseCode'            => 0, 
+                      'ResponseDesc'            => 'Success',
+                      'ThirdPartyTransID'       => $transID
+                     );
+                    }
+                }
                 break;
 
             case 'pay':
-                $phone      = $request->input('phone');
-                $amount     = $request->input('amount');
-                $reference  = $request->input('reference');
+                $phone      = $request->input('phone', '0705459494');
+                $amount     = $request->input('amount', 1);
+                $reference  = $request->input('reference', 'OSEN');
 
                 $phone = str_replace( "+", "", $phone );
                 $phone = preg_replace('/^0/', '254', $phone);
