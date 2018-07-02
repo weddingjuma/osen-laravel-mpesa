@@ -4,15 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class MpesaController extends Controller
+class Mpesa extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+	public function __invoke( Request $request, $path, $transID = 0 )
     {
+
         $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
         $credentials = base64_encode( getenv( 'MPESA_APP_KEY' ).':'.getenv( 'MPESA_APP_SECRET' ) );
@@ -25,16 +21,8 @@ class MpesaController extends Controller
         curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
         $curl_response = curl_exec( $curl );
         
-        $this->token = json_decode( $curl_response )->access_token;
-    }
+        $token = json_decode( $curl_response )->access_token;
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index( Request $request, $path = null, $transID = 0  )
-    {
         switch ( $path ) {
             case 'validate':
                 return array( 
@@ -58,13 +46,12 @@ class MpesaController extends Controller
                 break;
 
             case 'pay':
-                // Remove the plus sign before the customer's phone number if present
-                $phone      = $_POST['phone'] ?? '0705459494';
-                $amount     = $_POST['amount'] ?? 20;
-                $reference  = $_POST['reference'] ?? rand(0, 10000);
+                $phone      = $request->input('phone');
+                $amount     = $request->input('amount');
+                $reference  = $request->input('reference');
 
-                if ( substr( $phone, 0,1 ) == "+" ) $phone = str_replace( "+", "", $phone );
-                if ( substr( $phone, 0,1 ) == "0" ) $phone = preg_replace('/^0/', '254', $phone);
+                $phone = str_replace( "+", "", $phone );
+                $phone = preg_replace('/^0/', '254', $phone);
 
                 $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest' : 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
@@ -74,7 +61,7 @@ class MpesaController extends Controller
 
                 $curl = curl_init();
                 curl_setopt( $curl, CURLOPT_URL, $endpoint );
-                curl_setopt( $curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization:Bearer '.$this->token ] );
+                curl_setopt( $curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization:Bearer '.$token ] );
 
                 $curl_post_data = array( 
                     'BusinessShortCode' => getenv( 'MPESA_HO_NUMBER' ),
@@ -98,16 +85,18 @@ class MpesaController extends Controller
                 curl_setopt( $curl, CURLOPT_HEADER, false );
                 $response = curl_exec( $curl );
                 
-                return json_decode( $response, true );
+                return json_decode( $response );
                 break;
 
             case 'reconcile':
-                $response = json_decode( file_get_contents( 'php://input' ), true );
+                $response = $request->getBody();
+                $controller = $request->query('controller');
+                $method = $requets->query('method');
 
                 if( ! isset( $response['Body'] ) ){
-                    return;
+                    return call_user_func_array( array( $controller, $method ), array() );
                 } else {
-                    return MpesaPaymentsController::store();
+                    return call_user_func_array( array( $controller, $method ), $response );
                 }
                 break;
 
@@ -116,7 +105,7 @@ class MpesaController extends Controller
 
                 $curl = curl_init();
                 curl_setopt( $curl, CURLOPT_URL, $endpoint );
-                curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Content-Type:application/json','Authorization:Bearer '.$this->token ) );
+                curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Content-Type:application/json','Authorization:Bearer '.$token ) );
                     
                 $curl_post_data = array( 
                     'ShortCode'         => getenv( 'MPESA_SHORTCODE' ),
