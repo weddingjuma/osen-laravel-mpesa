@@ -5,25 +5,26 @@ Mpesa Controller class for Laravel PHP Framework
 ### Configuration
 Add the following to your .env file
 
-    MPESA_ENV="sandbox"\
-    MPESA_NAME=""\
-    MPESA_TYPE=""\
-    MPESA_SHORTCODE=""\
-    MPESA_HO_NUMBER=""\
-    MPESA_APP_KEY=""\
-    MPESA_APP_SECRET=""\
-    MPESA_USERNAME=""\
-    MPESA_PASSWORD=""\
-    MPESA_PASSKEY=""\
-    MPESA_CREDENTIALS=""\
-    MPESA_VALIDATE="0"\
-    MPESA_CONFIRM="0"\
-    MPESA_RECONCILE="0"\
-    MPESA_TIMEOUT="0"\
+    MPESA_ENV="sandbox"
+    MPESA_NAME=""
+    MPESA_TYPE=""
+    MPESA_SHORTCODE=""
+    MPESA_HO_NUMBER=""
+    MPESA_APP_KEY=""
+    MPESA_APP_SECRET=""
+    MPESA_USERNAME=""
+    MPESA_PASSWORD=""
+    MPESA_PASSKEY=""
+    MPESA_CREDENTIALS=""
+    MPESA_VALIDATE="0"
+    MPESA_CONFIRM="0"
+    MPESA_RECONCILE="0"
+    MPESA_TIMEOUT="0"
 
 
 Both of these URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a validate method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
-    MPESA_VALIDATE="App\Http\Controllerts\MpesaCheck@validate"\
+
+    MPESA_VALIDATE="App\Http\Controllerts\MpesaCheck@validate"
     MPESA_VALIDATE="App\MpesaPayment@create"
 
 ### Controller
@@ -43,9 +44,10 @@ Before you proceed, you need to register your validation and confirmation URLS. 
 
 ### Payment Processing
 To process payment for an online checkout, send a POST request to `https://yoursite.tld/:443/lipia/pay` with the following keys:
- 'amount'\
- 'phone'\
- 'reference'\
+
+     'amount'
+     'phone'
+     'reference'
 Note that `reference` is optional
 
 ### Reconciliation
@@ -56,7 +58,7 @@ You can take advantage of Laravel's inbuilt Model functions by creating a model,
 The following array keys and values is passed to your callback function - which is the body of the response returned by Mpesa:
 <table>
     <thead>
-        <th>Key</th>
+        <th>Array Key</th>
         <th>Sample Value</th>
     </thead>
     <tbody>
@@ -74,27 +76,27 @@ The following array keys and values is passed to your callback function - which 
         </tr>
         <tr>
             <td>CallbackMetadata</td>
-            <td>array( "Item" => [
-          [
-            "Name" => "Amount",
-            "Value" => 1
-          ],
-          [
-            "Name" => "MpesaReceiptNumber",
-            "Value":"LGR7OWQX0R"
-          ],
-          [
-            "Name" => "Balance"
-          ],
-          [
-            "Name" => "TransactionDate",
-            "Value" => 20170727154800
-          ],
-          [
-            "Name" => "PhoneNumber",
-            "Value" => 254721566839
-          ]
-        ])</td>
+            <td>array( "Item" => [\
+          [\
+            "Name" => "Amount",\
+            "Value" => 1\
+          ],\
+          [\
+            "Name" => "MpesaReceiptNumber",\
+            "Value":"LGR7OWQX0R"\
+          ],\
+          [\
+            "Name" => "Balance"\
+          ],\
+          [\
+            "Name" => "TransactionDate",\
+            "Value" => 20170727154800\
+          ],\
+          [\
+            "Name" => "PhoneNumber",\
+            "Value" => 254721566839\
+          ]\
+        ] )</td>
         </tr>
     </tbody>
 </table>
