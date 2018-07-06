@@ -25,7 +25,7 @@ Add the following to your .env file
 Both of these URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a validate method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
 
     MPESA_VALIDATE="App\Http\Controllerts\MpesaCheck@validate"
-    MPESA_VALIDATE="App\MpesaPayment@create"
+    MPESA_VALIDATE="App\MpesaPayment@index"
 
 ### Controller
 Copy Mpesa.php to the controllers directory, or create the controller via terminal by typing `php artisan make:controller Mpesa`, then copy the contents of the `Mpesa.php` file into your newly created controller.
@@ -52,7 +52,7 @@ Note that `reference` is optional
 
 ### Reconciliation
 
-By default, this contoller assumes no reconcilliation. However, if you need to reconcile the Mpesa Payments, you can either create a Model or Controller with a method that handles the reconciliaton - by saving it to a database for instance. This method MUST return a boolean value( true or false).
+By default, this contoller assumes no reconciliation. However, if you need to reconcile the Mpesa Payments, you can either create a Model or Controller with a method that handles the reconciliaton - by saving it to a database for instance. Remember to define this in the .env file in the format `Your\Namespaced\Controller@Method` This method MUST return a boolean value( true or false).
 You can take advantage of Laravel's inbuilt Model functions by creating a model, say, Mpayment, and calling the create method.
 
 The following array keys and values is passed to your callback function - which is the body of the response returned by Mpesa:
