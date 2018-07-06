@@ -104,7 +104,7 @@ Add the following to your .env file
 
 Both of these URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a `validate` method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
 
-    MPESA_VALIDATE="App\Http\Controllerts\MpesaCheck@validate"
+    MPESA_VALIDATE="App\Http\Controllers\MpesaCheck@validate"
     MPESA_VALIDATE="App\MpesaPayment@index"
 
 ### Controller
@@ -123,7 +123,7 @@ Add the following in your `~/routes/api.php` file to register our Mpesa IPN rout
 Before you proceed, you need to register your validation and confirmation URLS. To do this, navigate to `https://yoursite.tld/api/lipia/register`
 
 ### Payment Processing
-To process payment for an online checkout, send a POST request to `https://yoursite.tld/:443/api/lipia/pay` with the following keys:
+To process payment for an online checkout, send a POST request to `https://yoursite.tld:443/api/lipia/pay` with the following keys:
 
      'amount'
      'phone'
@@ -186,7 +186,7 @@ The following array keys and values is passed to your callback function - which 
     </tbody>
 </table>
 
-So, if your callback method is create(), for instance, it should take a single argument - $payment = array() - which is an array, from which you can access the variables as follows;
+So, if your callback method is create(), for instance, it should take a single argument - $payment - which is an array, from which you can access the variables as follows;
 
     $MerchantRequestID  = $payment['$MerchantRequestID'];
     $CheckoutRequestID  = $payment['CheckoutRequestID'];
