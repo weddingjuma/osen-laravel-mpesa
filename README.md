@@ -2,9 +2,9 @@
 Mpesa Controller class for Laravel PHP Framework
 
 ## Pre Requisites
-    Please <a href="https://developer.safaricom.co.ke/" target="_blank" >create an app on Daraja</a> if you haven\'t.
-    For security purposes, and for the MPesa Instant Payment Notification to work, ensure your site is running over https(SSL).
-    You can <a href="https://developer.safaricom.co.ke/test_credentials" target="_blank" >generate sandbox test credentials here</a>.
+Please <a href="https://developer.safaricom.co.ke/" target="_blank" >create an app on Daraja</a> if you haven\'t.
+For security purposes, and for the MPesa Instant Payment Notification to work, ensure your site is running over https(SSL).
+You can <a href="https://developer.safaricom.co.ke/test_credentials" target="_blank" >generate sandbox test credentials here</a>.
 
 The following configurations are required:
 
