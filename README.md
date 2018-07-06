@@ -76,26 +76,26 @@ The following array keys and values is passed to your callback function - which 
         </tr>
         <tr>
             <td>CallbackMetadata</td>
-            <td>array( "Item" => [\
-          [\
-            "Name" => "Amount",\
-            "Value" => 1\
-          ],\
-          [\
-            "Name" => "MpesaReceiptNumber",\
-            "Value":"LGR7OWQX0R"\
-          ],\
-          [\
-            "Name" => "Balance"\
-          ],\
-          [\
-            "Name" => "TransactionDate",\
-            "Value" => 20170727154800\
-          ],\
-          [\
-            "Name" => "PhoneNumber",\
-            "Value" => 254721566839\
-          ]\
+            <td>array( "Item" => [<br>
+          [<br>
+            "Name" => "Amount",<br>
+            "Value" => 1<br>
+          ],<br>
+          [<br>
+            "Name" => "MpesaReceiptNumber",<br>
+            "Value":"LGR7OWQX0R"<br>
+          ],<br>
+          [<br>
+            "Name" => "Balance"<br>
+          ],<br>
+          [<br>
+            "Name" => "TransactionDate",<br>
+            "Value" => 20170727154800<br>
+          ],<br>
+          [<br>
+            "Name" => "PhoneNumber",<br>
+            "Value" => 254721566839<br>
+          ]<br>
         ] )</td>
         </tr>
     </tbody>
