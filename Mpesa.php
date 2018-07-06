@@ -8,33 +8,37 @@ class Mpesa extends Controller
 {
 	public function __invoke( Request $request, $path, $transID = 0 )
     {
+        $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
-        // $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+        $credentials = base64_encode( getenv( 'MPESA_APP_KEY' ).':'.getenv( 'MPESA_APP_SECRET' ) );
 
-        // $credentials = base64_encode( getenv( 'MPESA_APP_KEY' ).':'.getenv( 'MPESA_APP_SECRET' ) );
-
-        // $curl = curl_init();
-        // curl_setopt( $curl, CURLOPT_URL, $endpoint );
-        // curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Basic '.$credentials ) );
-        // curl_setopt( $curl, CURLOPT_HEADER, false );
-        // curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
-        // curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
-        // $curl_response = curl_exec( $curl );
+        $curl = curl_init();
+        curl_setopt( $curl, CURLOPT_URL, $endpoint );
+        curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Basic '.$credentials ) );
+        curl_setopt( $curl, CURLOPT_HEADER, false );
+        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
+        $curl_response = curl_exec( $curl );
         
-        // $token = json_decode( $curl_response )->access_token;
+        $token = json_decode( $curl_response )->access_token;
 
         switch ( $path ) {
             case 'validate':
-                $class = $request->query( 'class', null );
-                $method = $request->query( 'method', null );
-                if( is_null( $class ) ){
+                $data = $request->getContent();
+
+                $cq = $request->query( 'cb', null );
+                if( $cq == "0" ){
                     return array( 
                       'ResponseCode'            => 0, 
                       'ResponseDesc'            => 'Success',
                       'ThirdPartyTransID'       => $transID
                      );
                 } else {
-                    if ( !call_user_func_array( array( $class, $method ), array( $transID ) )) {
+                    $callback = explode( '@', $cq );
+                    $class = new $callback[0];
+                    $method = $callback[1];
+
+                    if ( !call_user_func_array( array( $class, $method ), array( json_decode( $data, true)['Body'] ) )) {
                         return array( 
                           'ResponseCode'        => 1, 
                           'ResponseDesc'        => 'Failed',
@@ -51,16 +55,19 @@ class Mpesa extends Controller
                 break;
 
             case 'confirm':
-                $class = $request->query( 'class', null );
-                $method = $request->query( 'method', null );
-                if( is_null( $class ) ){
+                $cq = $request->query( 'cb', 0 );
+                if( $cq == "0" ){
                     return array( 
                       'ResponseCode'            => 0, 
                       'ResponseDesc'            => 'Success',
                       'ThirdPartyTransID'       => $transID
                      );
                 } else {
-                    if ( ! call_user_func_array( array( $class, $method ), array( $transID ) )) {
+                    $callback = explode( '@', $cq );
+                    $class = new $callback[0];
+                    $method = $callback[1];
+
+                    if ( !call_user_func_array( array( $class, $method ), array( json_decode( $data, true )['Body'] ) ) ) {
                         return array( 
                           'ResponseCode'        => 1, 
                           'ResponseDesc'        => 'Failed',
@@ -77,6 +84,8 @@ class Mpesa extends Controller
                 break;
 
             case 'pay':
+                $data = $request->getContent();
+
                 $phone      = $request->input('phone', '0705459494');
                 $amount     = $request->input('amount', 1);
                 $reference  = $request->input('reference', 'OSEN');
@@ -103,7 +112,7 @@ class Mpesa extends Controller
                     'PartyA'            => $phone,
                     'PartyB'            => getenv( 'MPESA_SHORTCODE' ),
                     'PhoneNumber'       => $phone,
-                    'CallBackURL'       => getenv( 'MPESA_CALLBACK_URL' ),
+                    'CallBackURL'       => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/reconcile?cb='.getenv( 'MPESA_RECONCILE' ),
                     'AccountReference'  => $reference,
                     'TransactionDesc'   => 'Ijiji Payment',
                     'Remark'            => 'Ijiji Payment'
@@ -120,14 +129,26 @@ class Mpesa extends Controller
                 break;
 
             case 'reconcile':
-                $response = $request->getBody();
-                $controller = $request->query('controller');
-                $method = $requets->query('method');
+                $data = $request->getContent();
+                $response = json_decode( $data, true );
 
-                if( ! isset( $response['Body'] ) ){
-                    return call_user_func_array( array( $controller, $method ), array() );
+                $cq = $request->query( 'cb', 0 );
+                if( $cq == 0 ){
+                    $class = $callback[0];
+                    $method = $callback[1];
+                    return array( 
+                      'ResponseCode'            => 0, 
+                      'ResponseDesc'            => 'Success',
+                      'ThirdPartyTransID'       => $transID
+                     );
                 } else {
-                    return call_user_func_array( array( $controller, $method ), $response );
+
+                    if( ! isset( $body['Body'] ) ){
+                        return  call_user_func_array( array( $class, $method ), array( null ) );
+                    } else {
+                        $payment = isset( $response['Body']['stkCallback'] ) ? $response['Body']['stkCallback'] : null;
+                        return  call_user_func_array( array( $class, $method ), array( $payment ) );
+                    }
                 }
                 break;
 
@@ -141,8 +162,8 @@ class Mpesa extends Controller
                 $curl_post_data = array( 
                     'ShortCode'         => getenv( 'MPESA_SHORTCODE' ),
                     'ResponseType'      => 'Cancelled',
-                    'ConfirmationURL'   => getenv( 'MPESA_CONFIRMATION_URL' ),
-                    'ValidationURL'     => getenv( 'MPESA_VALIDATION_URL' )
+                    'ConfirmationURL'   => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/confirm?cb'.getenv( 'MPESA_CONFIRM' ),
+                    'ValidationURL'     => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/validate?cb'.getenv( 'MPESA_VALIDATE' )
                 );
 
                 $data_string = json_encode( $curl_post_data );
