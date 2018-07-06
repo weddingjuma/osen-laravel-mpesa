@@ -60,19 +60,23 @@ The following array keys and values is passed to your callback function - which 
     <thead>
         <th>Array Key</th>
         <th>Sample Value</th>
+        <th>Description</th>
     </thead>
     <tbody>
         <tr>
             <td>MerchantRequestID</td>
             <td>19465-780693-1</td>
+            <td>The unique merchant request ID of the transaction.</td>
         </tr>
         <tr>
             <td>CheckoutRequestID</td>
             <td>ws_CO_27072017154747416</td>
+            <td>The unique checkout request ID of the transaction.</td>
         </tr>
         <tr>
             <td>ResultCode</td>
             <td>0</td>
+            <td>Mpesa result code. O is OK, and anything else is false</td>
         </tr>
         <tr>
             <td>CallbackMetadata</td>
@@ -97,6 +101,7 @@ The following array keys and values is passed to your callback function - which 
             "Value" => 254721566839<br>
           ]<br>
         ] )</td>
+        <td>Array of the callback meta data - actual details of transaction. Only present for a successsful transaction.</td>
         </tr>
     </tbody>
 </table>
