@@ -101,7 +101,7 @@ The following array keys and values is passed to your callback function - which 
     </tbody>
 </table>
 
-So, if your callback method is create(), for instance, it should take a single argument which is an array, from which you can access the variables as follows;
+So, if your callback method is create(), for instance, it should take a single argument - $payment = array() - which is an array, from which you can access the variables as follows;
 
     $MerchantRequestID  = $payment['$MerchantRequestID'];
     $CheckoutRequestID  = $payment['CheckoutRequestID'];
