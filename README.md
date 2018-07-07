@@ -21,11 +21,6 @@ The following configurations are required:
             <td>Your mpesa environment - sandbox if testing, live if in production</td>
         </tr>
         <tr>
-            <td>MPESA_NAME</td>
-            <td>Osen Concepts Kenya</td>
-            <td>The name of the business as registered with Safaricom.</td>
-        </tr>
-        <tr>
             <td>MPESA_TYPE</td>
             <td>Identifier type</td>
             <td>1 Shortcode || 2 Till || 4 MSIDN</td>
@@ -88,7 +83,6 @@ The following configurations are required:
 Add the following to your .env file
 
     MPESA_ENV="sandbox"
-    MPESA_NAME=""
     MPESA_TYPE=""
     MPESA_SHORTCODE=""
     MPESA_HO_NUMBER=""
@@ -102,7 +96,7 @@ Add the following to your .env file
     MPESA_TIMEOUT="0"
 
 
-Both of these URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a `validate` method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
+Both the validation and confirmation URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a `validate` method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
 
     MPESA_VALIDATE="App\Http\Controllers\MpesaCheck@validate"
     MPESA_VALIDATE="App\MpesaPayment@index"
@@ -188,7 +182,7 @@ The following array keys and values is passed to your callback function - which 
 
 So, if your callback method is create(), for instance, it should take a single argument - $payment - which is an array, from which you can access the variables as follows;
 
-    $MerchantRequestID  = $payment['$MerchantRequestID'];
+    $MerchantRequestID  = $payment['MerchantRequestID'];
     $CheckoutRequestID  = $payment['CheckoutRequestID'];
     $ResultCode         = $payment['ResultCode'];
     $ResultDesc         = $payment['ResultDesc'];
