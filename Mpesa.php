@@ -38,7 +38,7 @@ class Mpesa extends Controller
                     $class = new $callback[0];
                     $method = $callback[1];
 
-                    if ( !call_user_func_array( array( $class, $method ), array( json_decode( $data, true)['Body'] ) )) {
+                    if ( !call_user_func_array( array( $class, $method ), array( json_decode( $data, true)['Body'] ) ) ) {
                         return array( 
                           'ResponseCode'        => 1, 
                           'ResponseDesc'        => 'Failed',
@@ -84,19 +84,19 @@ class Mpesa extends Controller
                 break;
 
             case 'pay':
-                $data = $request->getContent();
+                $data       = $request->getContent();
 
                 $phone      = $request->input('phone', '0705459494');
+                $phone      = str_replace( "+", "", $phone );
+                $phone      = preg_replace('/^0/', '254', $phone);
+
                 $amount     = $request->input('amount', 1);
                 $reference  = $request->input('reference', 'OSEN');
 
-                $phone = str_replace( "+", "", $phone );
-                $phone = preg_replace('/^0/', '254', $phone);
+                $endpoint   = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest' : 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
-                $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest' : 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
-
-                $timestamp = date( 'YmdHis' );
-                $password = base64_encode( getenv( 'MPESA_SHORTCODE' ).getenv( 'MPESA_PASSKEY' ).$timestamp );
+                $timestamp  = date( 'YmdHis' );
+                $password   = base64_encode( getenv( 'MPESA_SHORTCODE' ).getenv( 'MPESA_PASSKEY' ).$timestamp );
 
 
                 $curl = curl_init();
@@ -114,8 +114,8 @@ class Mpesa extends Controller
                     'PhoneNumber'       => $phone,
                     'CallBackURL'       => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/reconcile?cb='.getenv( 'MPESA_RECONCILE' ),
                     'AccountReference'  => $reference,
-                    'TransactionDesc'   => 'Ijiji Payment',
-                    'Remark'            => 'Ijiji Payment'
+                    'TransactionDesc'   => getenv('APP_NAME').' Payment',
+                    'Remark'            => getenv('APP_NAME').' Payment'
                 );
 
                 $data_string = json_encode( $curl_post_data );
