@@ -51,11 +51,6 @@ The following configurations are required:
             <td></td>
         </tr>
         <tr>
-            <td>MPESA_CREDENTIALS</td>
-            <td>Security Credentials</td>
-            <td></td>
-        </tr>
-        <tr>
             <td>MPESA_VALIDATE</td>
             <td>0 || Your\Namespaced\Controller@method</td>
             <td></td>
@@ -89,7 +84,6 @@ Add the following to your .env file
     MPESA_APP_KEY=""
     MPESA_APP_SECRET=""
     MPESA_PASSKEY=""
-    MPESA_CREDENTIALS=""
     MPESA_VALIDATE="0"
     MPESA_CONFIRM="0"
     MPESA_RECONCILE="0"
