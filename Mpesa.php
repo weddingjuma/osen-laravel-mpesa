@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package Mpesa Controller
+ * @author Osen Concepts Kenya
+ * @link https://osen.co.ke
+ * @see https://github.com/osenco/osen-laravel-mpesa
+ * @version 1.7.8
+ * @license MIT < https://opensource.org/licenses/MIT > 
+ */
 
 namespace App\Http\Controllers;
 
@@ -6,7 +14,7 @@ use Illuminate\Http\Request;
 
 class Mpesa extends Controller
 {
-	public function __invoke( Request $request, $path, $transID = 0 )
+    public function __invoke( Request $request, $path, $transID = 0 )
     {
         $endpoint = ( getenv( 'MPESA_ENV' ) == 'live' ) ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials' : 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
@@ -84,8 +92,6 @@ class Mpesa extends Controller
                 break;
 
             case 'pay':
-                $data       = $request->getContent();
-
                 $phone      = $request->input('phone', '0705459494');
                 $phone      = str_replace( "+", "", $phone );
                 $phone      = preg_replace('/^0/', '254', $phone);
@@ -125,7 +131,7 @@ class Mpesa extends Controller
                 curl_setopt( $curl, CURLOPT_HEADER, false );
                 $response = curl_exec( $curl );
                 
-                return json_decode( $response );
+                return json_decode( $response, true );
                 break;
 
             case 'reconcile':
