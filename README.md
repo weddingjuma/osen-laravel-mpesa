@@ -123,26 +123,26 @@ We highly suggest/recommend processing the payment form using JQuery AJAX, since
 
 ##### The Form
 Create a form and give it a unique ID
-    `<form id="payment-form" action="\{\{ url('api/lipia/pay') \}\}" method="POST">`
-        `@csrf`
-        `<input type="text" name="phone">`
-        <pre><code><input type="text" name="amount"></code></pre>
-        <pre><code><input type="text" name="reference"></code></pre>
-    <pre><code></form></code></pre>
+    `<form id="payment-form" action="{{ url('api/lipia/pay') }}" method="POST">
+        @csrf
+        <input type="text" name="phone">
+        <input type="text" name="amount">
+        <input type="text" name="reference">
+    </form>`
 
 ##### The Javascript
 To submit the form, use the following Javascript code
-    <pre><code><script type="text/javascript"></code></pre>
-        <pre><code>$(document).ready(function() {</code></pre>
-            <pre><code>$('#payment-form').submit(function(e) {</code></pre>
-              <pre><code>e.preventDefault();</code></pre>
-              <pre><code>var form = $(this);</code></pre>
-              <pre><code>$.post(form.attr('action'), form.serialize(), function(result) {</code></pre>
-                <pre><code>// Process result e.g by echoing it out or something</code></pre>
-              <pre><code>}, 'json');</code></pre>
-            <pre><code>});</code></pre>
-        <pre><code>});</code></pre>
-    <pre><code></script></code></pre>
+    `<script type="text/javascript">
+        $(document).ready(function() {
+            $('#payment-form').submit(function(e) {
+              e.preventDefault();
+              var form = $(this);
+              $.post(form.attr('action'), form.serialize(), function(result) {
+                // Process result e.g by echoing it out or something
+              }, 'json');
+            });
+        });
+    </script>`
 
 ### Reconciliation
 
