@@ -123,16 +123,16 @@ We highly suggest/recommend processing the payment form using JQuery AJAX, since
 
 ##### The Form
 Create a form and give it a unique ID
-    `<form id="payment-form" action="{{ url('api/lipia/pay') }}" method="POST">
+    <form id="payment-form" action="{{ url('api/lipia/pay') }}" method="POST">
         @csrf
         <input type="text" name="phone">
         <input type="text" name="amount">
         <input type="text" name="reference">
-    </form>`
+    </form>
 
 ##### The Javascript
 To submit the form, use the following Javascript code
-    `<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function() {
             $('#payment-form').submit(function(e) {
               e.preventDefault();
@@ -142,7 +142,7 @@ To submit the form, use the following Javascript code
               }, 'json');
             });
         });
-    </script>`
+    </script>
 
 ### Reconciliation
 
