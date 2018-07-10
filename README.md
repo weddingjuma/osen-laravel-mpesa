@@ -1,4 +1,4 @@
-# Laravel Mpesa
+# Mpesa for Laravel
 Mpesa Controller class for Laravel PHP Framework
 
 ## Pre Requisites
@@ -117,6 +117,32 @@ To process payment for an online checkout, send a POST request to `https://yours
      'phone'
      'reference'
 Note that `reference` is optional
+
+#### Payment Form & Processing
+We highly suggest/recommend processing the payment form using JQuery AJAX, since this controller uses api endpoints.
+
+##### The Form
+Create a form and give it a unique ID
+    `<form id="payment-form" action="{{ url('api/lipia/pay') }}" method="POST">
+        @csrf
+        <input type="text" name="phone">
+        <input type="text" name="amount">
+        <input type="text" name="reference">
+    </form>`
+
+##### The Javascript
+To submit the form, use the following Javascript code
+    `<script type="text/javascript">
+        $(document).ready(function() {
+            $('#payment-form').submit(function(e) {
+              e.preventDefault();
+              var form = $(this);
+              $.post(form.attr('action'), form.serialize(), function(result) {
+                // Process result e.g by echoing it out or something
+              }, 'json');
+            });
+        });
+    </script>`
 
 ### Reconciliation
 
