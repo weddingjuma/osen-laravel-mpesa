@@ -123,9 +123,9 @@ We highly suggest/recommend processing the payment form using JQuery AJAX, since
 
 ##### The Form
 Create a form and give it a unique ID
-    <pre><code><form id="payment-form" action="\{\{ url('api/lipia/pay') \}\}" method="POST"></code></pre>
-        @csrf
-        <pre><code><input type="text" name="phone"></code></pre>
+    `<form id="payment-form" action="\{\{ url('api/lipia/pay') \}\}" method="POST">`
+        `@csrf`
+        `<input type="text" name="phone">`
         <pre><code><input type="text" name="amount"></code></pre>
         <pre><code><input type="text" name="reference"></code></pre>
     <pre><code></form></code></pre>
