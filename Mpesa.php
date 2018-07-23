@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Mpesa Controller
- * @author Osen Concepts Kenya
+ * @author Osen Concepts Kenya < hi@osen.co.ke >
  * @link https://osen.co.ke
  * @see https://github.com/osenco/osen-laravel-mpesa
  * @version 1.7.8
@@ -34,7 +34,7 @@ class Mpesa extends Controller
             case 'validate':
                 $data = $request->getContent();
 
-                $cq = $request->query( 'cb', null );
+                $cq = $request->query( 'cb', getenv( 'MPESA_VALIDATE' ) );
                 if( $cq == "0" ){
                     return array( 
                       'ResponseCode'            => 0, 
@@ -63,7 +63,7 @@ class Mpesa extends Controller
                 break;
 
             case 'confirm':
-                $cq = $request->query( 'cb', 0 );
+                $cq = $request->query( 'cb', getenv( 'MPESA_CONFIRM' ) );
                 if( $cq == "0" ){
                     return array( 
                       'ResponseCode'            => 0, 
@@ -138,16 +138,16 @@ class Mpesa extends Controller
                 $data = $request->getContent();
                 $response = json_decode( $data, true );
 
-                $cq = $request->query( 'cb', 0 );
+                $cq = $request->query( 'cb', getenv( 'MPESA_RECONCILE' ) );
                 if( $cq == 0 ){
-                    $class = $callback[0];
-                    $method = $callback[1];
                     return array( 
                       'ResponseCode'            => 0, 
                       'ResponseDesc'            => 'Success',
                       'ThirdPartyTransID'       => $transID
                      );
                 } else {
+                    $class = $callback[0];
+                    $method = $callback[1];
 
                     if( ! isset( $body['Body'] ) ){
                         return  call_user_func_array( array( $class, $method ), array( null ) );
@@ -168,8 +168,8 @@ class Mpesa extends Controller
                 $curl_post_data = array( 
                     'ShortCode'         => getenv( 'MPESA_SHORTCODE' ),
                     'ResponseType'      => 'Cancelled',
-                    'ConfirmationURL'   => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/confirm?cb'.getenv( 'MPESA_CONFIRM' ),
-                    'ValidationURL'     => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/validate?cb'.getenv( 'MPESA_VALIDATE' )
+                    'ConfirmationURL'   => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/confirm?cb='.getenv( 'MPESA_CONFIRM' ),
+                    'ValidationURL'     => getenv('APP_URL').':'.$_SERVER['SERVER_PORT'].'/validate?cb='.getenv( 'MPESA_VALIDATE' )
                 );
 
                 $data_string = json_encode( $curl_post_data );
