@@ -104,7 +104,6 @@ class Mpesa extends Controller
                 $timestamp  = date( 'YmdHis' );
                 $password   = base64_encode( getenv( 'MPESA_SHORTCODE' ).getenv( 'MPESA_PASSKEY' ).$timestamp );
 
-
                 $curl = curl_init();
                 curl_setopt( $curl, CURLOPT_URL, $endpoint );
                 curl_setopt( $curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization:Bearer '.$token ] );
@@ -113,7 +112,7 @@ class Mpesa extends Controller
                     'BusinessShortCode' => getenv( 'MPESA_HO_NUMBER' ),
                     'Password'          => $password,
                     'Timestamp'         => $timestamp,
-                    'TransactionType'   => 'CustomerPayBillOnline',
+                    'TransactionType'   => ( getenv( 'MPESA_TYPE' ) == 4 ) ? 'CustomerPayBillOnline' : 'BuyGoodsOnline'
                     'Amount'            => round( $amount ),
                     'PartyA'            => $phone,
                     'PartyB'            => getenv( 'MPESA_SHORTCODE' ),
