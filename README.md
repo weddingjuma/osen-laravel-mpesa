@@ -23,7 +23,7 @@ The following configurations are required:
         <tr>
             <td>MPESA_TYPE</td>
             <td>Identifier type</td>
-            <td>1 Shortcode || 2 Till || 4 MSIDN</td>
+            <td>4 Shortcode || 2 Till || 1 MSIDN</td>
         </tr>
         <tr>
             <td>MPESA_SHORTCODE</td>
@@ -90,7 +90,7 @@ Add the following to your .env file
     MPESA_TIMEOUT="0"
 
 
-Both the validation and confirmation URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can pass your callbacks as query variables. For instance if you have a controller called `MpesaCheck`, with a `validate` method for validation - or a Model called `MpesaPayment` you can register them as follows. Remember to add the full namespace of the class.
+Both the validation and confirmation URLs output a success response. To actually validate/confirm the transaction before outputing the response, you can define your callbacks in the .env file - they are passed as query variables at the various enpoints. For instance if you have a controller called `MpesaCheck`, with a `validate` method for validation - or a Model called `MpesaPayment` you can register them like below. Remember to add the full namespace of the class.
 
     MPESA_VALIDATE="App\Http\Controllers\MpesaCheck@validate"
     MPESA_VALIDATE="App\MpesaPayment@index"
